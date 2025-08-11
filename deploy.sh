@@ -44,7 +44,7 @@ clone_or_update_repo() {
   fi
 }
 
-ensure_env_files() {
+ensure_env() {
   cd "$APP_DIR"
 
   echo "[INFO] Ensuring .env.local exists (will not modify .env)"
