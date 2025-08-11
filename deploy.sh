@@ -48,25 +48,30 @@ ensure_env() {
   cd "$APP_DIR"
 
   echo "[INFO] Ensuring .env.local exists (will not modify .env)"
+  # Generate sane defaults (override by exporting env vars before run)
   MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-$(openssl rand -hex 16)}"
-  MYSQL_DB="${MYSQL_DB:-example}"
+  MYSQL_DATABASE="${MYSQL_DATABASE:-example}"
   MYSQL_USER="${MYSQL_USER:-app}"
   MYSQL_PASSWORD="${MYSQL_PASSWORD:-$(openssl rand -hex 16)}"
   TABLE_NAME="${TABLE_NAME:-requests}"
 
   cat > .env.local <<EOF
+# --- MySQL official image expects these names ---
 MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-MYSQL_DB=${MYSQL_DB}
+MYSQL_DATABASE=${MYSQL_DATABASE}
 MYSQL_USER=${MYSQL_USER}
 MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
-DB_NAME=${MYSQL_DB}
+# --- App reads DB_* in your code ---
+DB_HOST=db
+DB_NAME=${MYSQL_DATABASE}
 DB_USER=${MYSQL_USER}
 DB_PASSWORD=${MYSQL_PASSWORD}
 TABLE_NAME=${TABLE_NAME}
 EOF
   chmod 600 .env.local
 }
+
 
 
 compose_up() {
